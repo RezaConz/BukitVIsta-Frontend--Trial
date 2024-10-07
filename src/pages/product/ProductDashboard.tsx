@@ -39,7 +39,7 @@ function ProductDashboard() {
   }
 
   return (
-    <div className='flex flex-col mx-12 px-4 py-8'>
+    <div className='flex flex-col mx-12 py-8'>
       <div className='flex justify-between items-center mb-6'>
         <h2 className='text-3xl font-bold'>Product Dashboard</h2>
         <button
