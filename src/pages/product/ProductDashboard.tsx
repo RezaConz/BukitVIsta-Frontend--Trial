@@ -16,7 +16,7 @@ function ProductDashboard() {
     setCategory,
     setLimit,
     setSort,
-  } = useProduct();
+  } = useProduct()!;
   const { logout } = useAuth();
 
   useEffect(() => {
@@ -83,7 +83,7 @@ function ProductDashboard() {
             <label className='block text-sm font-medium mb-2'>Sort:</label>
             <select
               value={sort}
-              onChange={(e) => setSort(e.target.value)}
+              onChange={(e) => setSort(e.target.value as "asc" | "desc")}
               className='block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
             >
               <option value='asc'>Ascending</option>

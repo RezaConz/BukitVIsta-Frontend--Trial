@@ -39,7 +39,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
         ...state,
         isAuthenticated: true,
         user: action.payload?.user,
-        token: action.payload?.token,
+        token: action.payload?.token ?? null,
       };
     case "LOGOUT":
       return initialState;

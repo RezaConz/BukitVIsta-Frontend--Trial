@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 
-// const ProductContext = createContext();
-
 const initialState = {
   products: [],
   categories: [],
@@ -12,9 +10,8 @@ const initialState = {
   error: null,
 };
 
-// Define the types for the Product state
 interface ProductState {
-  products: any[]; // Replace `any` with the appropriate type for your products
+  products: any[];
   categories: string[];
   currentCategory: string;
   limit: number;
@@ -23,7 +20,6 @@ interface ProductState {
   error: string | null;
 }
 
-// Define the types for the context
 interface ProductContextType extends ProductState {
   fetchProducts: () => void;
   setCategory: (category: string) => void;
@@ -33,7 +29,7 @@ interface ProductContextType extends ProductState {
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
-function productReducer(state, action) {
+function productReducer(state: any, action: { type: any; payload: any }) {
   switch (action.type) {
     case "SET_PRODUCTS":
       return { ...state, products: action.payload, loading: false };
@@ -48,13 +44,17 @@ function productReducer(state, action) {
     case "SET_LOADING":
       return { ...state, loading: action.payload };
     case "SET_ERROR":
-      return { ...state, error: action.payload, loading: false };
+      return {
+        ...state,
+        error: action.payload as string | null,
+        loading: false,
+      };
     default:
       return state;
   }
 }
 
-export function ProductProvider({ children }) {
+export function ProductProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(productReducer, initialState);
 
   useEffect(() => {
@@ -62,32 +62,25 @@ export function ProductProvider({ children }) {
   }, []);
 
   const fetchCategories = async () => {
-    try {
-      const response = await fetch(
-        "https://fakestoreapi.com/products/categories"
-      );
-      if (!response.ok) throw new Error("Failed to fetch categories");
-      const data = await response.json();
-      dispatch({ type: "SET_CATEGORIES", payload: data });
-    } catch (error) {
-      dispatch({ type: "SET_ERROR", payload: error.message });
-    }
+    const response = await fetch(
+      "https://fakestoreapi.com/products/categories"
+    );
+    if (!response.ok) throw new Error("Failed to fetch categories");
+    const data = await response.json();
+    dispatch({ type: "SET_CATEGORIES", payload: data });
   };
 
   const fetchProducts = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
-    try {
-      let url = `https://fakestoreapi.com/products?limit=${state.limit}&sort=${state.sort}`;
-      if (state.currentCategory) {
-        url = `https://fakestoreapi.com/products/category/${state.currentCategory}?limit=${state.limit}&sort=${state.sort}`;
-      }
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Failed to fetch products");
-      const data = await response.json();
-      dispatch({ type: "SET_PRODUCTS", payload: data });
-    } catch (error) {
-      dispatch({ type: "SET_ERROR", payload: error.message });
+
+    let url = `https://fakestoreapi.com/products?limit=${state.limit}&sort=${state.sort}`;
+    if (state.currentCategory) {
+      url = `https://fakestoreapi.com/products/category/${state.currentCategory}?limit=${state.limit}&sort=${state.sort}`;
     }
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch products");
+    const data = await response.json();
+    dispatch({ type: "SET_PRODUCTS", payload: data });
   };
 
   const setCategory = (category: any) => {
