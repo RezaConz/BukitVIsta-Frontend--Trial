@@ -15,7 +15,7 @@ interface AuthState {
 interface AuthAction {
   type: "LOGIN" | "LOGOUT";
   payload?: {
-    user?: any; 
+    user?: any;
     token?: string;
   };
 }
@@ -24,6 +24,7 @@ const AuthContext = createContext<{
   state: AuthState;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
+  isAuthenticated: boolean;
 } | null>(null);
 
 const initialState: AuthState = {
@@ -102,7 +103,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   return (
-    <AuthContext.Provider value={{ ...state, login, logout }}>
+    <AuthContext.Provider value={{ state, login, logout, isAuthenticated: state.isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

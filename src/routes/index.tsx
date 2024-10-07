@@ -4,12 +4,14 @@ import LoginPage from "../pages/login";
 import ProductDashboard from "../pages/product/ProductDashboard";
 import ProductDetail from "../pages/productDetail/ProductDetail";
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+import { ReactNode } from "react";
+
+const ProtectedRoute = ({ children }: { children: ReactNode }) => {
+  const { isAuthenticated  } = useAuth();
   return isAuthenticated ? children : <Navigate to='/login' />;
 };
 
-const PublicRoute = ({ children }) => {
+const PublicRoute = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? <Navigate to='/products' /> : children;
 };
