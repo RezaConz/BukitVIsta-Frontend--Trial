@@ -1,21 +1,45 @@
-import { createContext, useContext, useReducer, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  ReactNode,
+} from "react";
 
-const AuthContext = createContext(null);
+interface AuthState {
+  isAuthenticated: boolean;
+  user: any;
+  token: string | null;
+}
 
-const initialState = {
+interface AuthAction {
+  type: "LOGIN" | "LOGOUT";
+  payload?: {
+    user?: any; 
+    token?: string;
+  };
+}
+
+const AuthContext = createContext<{
+  state: AuthState;
+  login: (username: string, password: string) => Promise<boolean>;
+  logout: () => void;
+} | null>(null);
+
+const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
   token: null,
 };
 
-function authReducer(state, action) {
+function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case "LOGIN":
       return {
         ...state,
         isAuthenticated: true,
-        user: action.payload.user,
-        token: action.payload.token,
+        user: action.payload?.user,
+        token: action.payload?.token,
       };
     case "LOGOUT":
       return initialState;
@@ -24,7 +48,11 @@ function authReducer(state, action) {
   }
 }
 
-export function AuthProvider({ children }) {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
@@ -38,7 +66,10 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = async (username, password) => {
+  const login = async (
+    username: string,
+    password: string
+  ): Promise<boolean> => {
     try {
       const response = await fetch("https://fakestoreapi.com/auth/login", {
         method: "POST",
@@ -78,5 +109,9 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (context === null) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }

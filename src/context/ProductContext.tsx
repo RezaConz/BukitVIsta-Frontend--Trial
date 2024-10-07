@@ -1,7 +1,6 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 
-const ProductContext = createContext();
+// const ProductContext = createContext();
 
 const initialState = {
   products: [],
@@ -12,6 +11,27 @@ const initialState = {
   loading: false,
   error: null,
 };
+
+// Define the types for the Product state
+interface ProductState {
+  products: any[]; // Replace `any` with the appropriate type for your products
+  categories: string[];
+  currentCategory: string;
+  limit: number;
+  sort: "asc" | "desc";
+  loading: boolean;
+  error: string | null;
+}
+
+// Define the types for the context
+interface ProductContextType extends ProductState {
+  fetchProducts: () => void;
+  setCategory: (category: string) => void;
+  setLimit: (limit: number) => void;
+  setSort: (sort: "asc" | "desc") => void;
+}
+
+const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 function productReducer(state, action) {
   switch (action.type) {
@@ -70,15 +90,15 @@ export function ProductProvider({ children }) {
     }
   };
 
-  const setCategory = (category) => {
+  const setCategory = (category: any) => {
     dispatch({ type: "SET_CURRENT_CATEGORY", payload: category });
   };
 
-  const setLimit = (limit) => {
+  const setLimit = (limit: any) => {
     dispatch({ type: "SET_LIMIT", payload: limit });
   };
 
-  const setSort = (sort) => {
+  const setSort = (sort: any) => {
     dispatch({ type: "SET_SORT", payload: sort });
   };
 

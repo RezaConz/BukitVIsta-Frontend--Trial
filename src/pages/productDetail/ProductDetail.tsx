@@ -2,24 +2,31 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+  rating: {
+    rate: number;
+    count: number;
+  };
+}
+
 function ProductDetail() {
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const { id } = useParams();
 
   useEffect(() => {
     const fetchProductDetail = async () => {
-      try {
-        const response = await fetch(`https://fakestoreapi.com/products/${id}`);
-        if (!response.ok) throw new Error("Failed to fetch product details");
-        const data = await response.json();
-        setProduct(data);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setLoading(false);
-      }
+      const response = await fetch(`https://fakestoreapi.com/products/${id}`);
+      if (!response.ok) throw new Error("Failed to fetch product details");
+      const data = await response.json();
+      setProduct(data);
+      setLoading(false);
     };
 
     fetchProductDetail();
@@ -32,12 +39,6 @@ function ProductDetail() {
       </div>
     );
 
-  if (error)
-    return (
-      <div className='flex justify-center items-center h-screen text-red-500'>
-        Error: {error}
-      </div>
-    );
   if (!product)
     return (
       <div className='flex justify-center items-center h-screen text-gray-500'>
